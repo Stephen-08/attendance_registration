@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Search, User, Clock, FileText, LogOut } from 'lucide-react';
 import logoImage from '../assets/logo.png'; // ✅ Correct image import
-import '../pages/home.css';
+import '../pages/SidebarLayout.css';
 
 const SidebarLayout = ({ children }) => {
   const location = useLocation();
@@ -49,11 +49,7 @@ const SidebarLayout = ({ children }) => {
             />
           </div>
 
-          <div className="search-container">
-            <Search className="search-icon" />
-            <input type="text" placeholder="Quick Search..." className="search-input" />
-          </div>
-
+          
           <div className="header-actions">
             <div className="user-profile">
               <div className="user-info">
@@ -90,11 +86,11 @@ const SidebarLayout = ({ children }) => {
                 <span>Requests</span>
               </button>
               <button 
-                className={`nav-item ${location.pathname === '/working-hours' ? 'active' : ''}`}
-                onClick={() => navigate('/working-hours')}
+                className={`nav-item ${location.pathname === '/Monthly-Records' ? 'active' : ''}`}
+                onClick={() => navigate('/Monthly-Records')}
               >
                 <Clock size={20} />
-                <span>Working Hours</span>
+                <span>Monthly Record</span>
               </button>
             </div>
 
@@ -117,6 +113,7 @@ const SidebarLayout = ({ children }) => {
         </div>
       </main>
     </div>
+    
   );
 };
 
