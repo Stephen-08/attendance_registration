@@ -6,14 +6,13 @@ import Requests from './pages/requests';
 import Monthly from './pages/monthly_Record'
 
 function App() {
-  return (
+  return (  
     <Router>
       <div className="App">
         <Routes>
           <Route path="/" element={<LoginForm />} />
           <Route path="/login" element={<LoginForm />} />
           <Route path="/create-account" element={<CreateAccount />} />
-          <Route path="/home" element={<Home />} />
           <Route path="/dashboard" element={<Home />} />
           <Route path="/requests" element={<Requests />} />
           <Route path="/Monthly-Records" element={<Monthly />} />

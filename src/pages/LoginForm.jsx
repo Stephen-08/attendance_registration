@@ -52,7 +52,7 @@ export default function LoginForm() {
         // Login successful - navigate to home page with username
         console.log('Login successful, username:', data.username);
         + localStorage.setItem('username', data.username); // Save to localStorage
-        navigate('/home', {
+        navigate('/dashboard', {
           state: { username: data.username },
           replace: true
         });
