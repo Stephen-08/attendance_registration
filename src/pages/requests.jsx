@@ -117,7 +117,7 @@ const Section = ({ title, data, type, onStatusChange }) => {
       <table>
         <thead>
           <tr>
-            <th>Request ID</th>
+            
             <th>Employee ID</th>
             <th>Employee</th>
             <th>Role</th>
@@ -133,7 +133,6 @@ const Section = ({ title, data, type, onStatusChange }) => {
           ) : (
             data.map((entry, i) => (
               <tr key={i}>
-                <td>{entry.request_id}</td>
                 <td>{entry.employee_id}</td>
                 <td>{entry.name}</td>
                 <td>{entry.role}</td>

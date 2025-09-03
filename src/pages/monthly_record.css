@@ -1,136 +1,354 @@
+/* Add these styles to your existing monthly_record.css */
 
-
-/* Table container */
-.table-container {
-  background: #fff;         /* keep white */
-  border-radius: 20px;      /* your rounded corners */
-  padding: 20px;            /* keep spacing */
-  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-
-  height: auto;             /* 🔑 let it shrink to fit */
-  min-height: unset;        /* 🔑 remove any min-height */
+.date-filter-section {
+  background: #f8f9fa;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 20px 0;
 }
 
+.filter-type-selector {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
 
-/* Records table */
+.filter-type-selector button {
+  padding: 8px 16px;
+  border: 2px solid #642784;
+  background: white;
+  color: #642784;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.filter-type-selector button.active {
+  background: #642784;
+  color: white;
+}
+
+.filter-type-selector button:hover {
+  background: #642784;
+  color: white;
+}
+
+.month-selector {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.month-selector label {
+  font-weight: 600;
+  color: #2d3436;
+  min-width: 120px;
+}
+
+.month-selector input[type="month"] {
+  padding: 10px;
+  border: 2px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  background: white;
+  transition: border-color 0.3s ease;
+}
+
+.month-selector input[type="month"]:focus {
+  outline: none;
+  border-color: #642784;
+}
+
+.date-range-selector {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.date-input-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.date-input-group label {
+  font-weight: 600;
+  color: #2d3436;
+  min-width: 50px;
+}
+
+.date-input-group input[type="date"] {
+  padding: 10px;
+  border: 2px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  background: white;
+  transition: border-color 0.3s ease;
+}
+
+.date-input-group input[type="date"]:focus {
+  outline: none;
+  border-color: #642784;
+}
+
+.apply-filter-btn {
+  padding: 10px 20px;
+  background: #642784;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.3s ease;
+}
+
+.apply-filter-btn:hover:not(:disabled) {
+  background: #642784;
+}
+
+.apply-filter-btn:disabled {
+  background: #b2b2b2;
+  cursor: not-allowed;
+}
+
+.period-info {
+  background: #e3f2fd;
+  border: 1px solid #bbdefb;
+  border-radius: 6px;
+  padding: 12px;
+  margin: 15px 0;
+  text-align: center;
+  font-weight: 500;
+  color: #1565c0;
+}
+
+.loading-indicator {
+  text-align: center;
+  padding: 20px;
+  color: #642784;
+  font-weight: 500;
+}
+
+.attendance-rate {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.attendance-rate.good {
+  background: #d4edda;
+  color: #155724;
+}
+
+.attendance-rate.average {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.attendance-rate.poor {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+/* Responsive design for mobile */
+@media (max-width: 768px) {
+  .date-range-selector {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .date-input-group {
+    justify-content: space-between;
+  }
+  
+  .filter-type-selector {
+    justify-content: center;
+  }
+  
+  .month-selector {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .month-selector label {
+    min-width: unset;
+    text-align: center;
+  }
+}
+
+/* Update existing table to handle more columns */
 .records-table {
   width: 100%;
-  border-collapse: collapse;
-}
-
-/* Top row with title + search */
-.header-title {
-  font-size: 18px;
-  font-weight: bold;
-  color: #000;
-}
-
-/* Search input inside table header */
-.search-input {
-  width: 220px;
-  padding: 8px 12px;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-  outline: none;
-  font-size: 14px;
-  transition: 0.3s ease;
-}
-
-.search-input:focus {
-  border-color: #7a2eff;
-  box-shadow: 0 0 6px rgba(122, 46, 255, 0.3);
-}
-
-/* Column headers */
-.records-table thead tr:nth-child(2) {
-  background: #e5e5e5;
-  color: black;
-  text-align: center;
+  font-size: 13px; /* Slightly smaller to fit more columns */
 }
 
 .records-table th,
 .records-table td {
-  padding: 12px 15px;
-  font-size: 14px;
-  border-bottom: 1px solid #f0f0f0;
-  text-align: center; /* all cells center aligned */
-}
-
-.records-table tr:hover {
-  background: #f9f5ff;
-  transition: 0.3s;
-}
-
-/* No data row */
-.no-data {
+  padding: 8px 6px; /* Reduced padding for more columns */
   text-align: center;
-  padding: 20px;
-  color: #888;
-  font-style: italic;
 }
 
+.records-table th:first-child,
+.records-table td:first-child {
+  text-align: left;
+}
 
+/* Enhanced Search Bar Styles - Add to your monthly_record.css */
+
+.search-container {
+  position: relative;
+  max-width: 300px;
+}
+
+.search-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  color: #9ca3af;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.search-input-enhanced {
+  width: 100%;
+  padding: 10px 40px 10px 40px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  background: white;
+  color: #374151;
+  transition: all 0.2s ease-in-out;
+  outline: none;
+}
+
+.search-input-enhanced::placeholder {
+  color: #9ca3af;
+}
+
+.search-input-enhanced:hover {
+  border-color: #9ca3af;
+}
+
+.search-input-enhanced:focus {
+  border-color: #642784;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.clear-button {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  color: #9ca3af;
+  cursor: pointer;
+  padding: 2px;
+  border-radius: 3px;
+  transition: color 0.15s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.clear-button:hover {
+  color: #6b7280;
+  background-color: #f3f4f6;
+}
+
+/* Update your existing table-header to use flexbox properly */
 .table-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 20px;
-  background-color: white;
-  margin-bottom: 8px; /* spacing before the table */
+  margin-bottom: 20px;
+  padding: 20px 0;
 }
 
-.table-header h2 {
-  margin: 0;
-  font-size: 18px;
-  font-weight: bold;
-  color: black; /* text black */
+.header-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #1f2937;
 }
 
-.table-header input {
-  padding: 6px 12px;
-  border: 1px solid #ccc;
+/* Remove or update your existing search-input class */
+.search-input {
+  /* Keep this for backward compatibility or remove if not used elsewhere */
+  display: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .table-header {
+    flex-direction: column;
+    gap: 15px;
+    align-items: stretch;
+  }
+  
+  .search-container {
+    max-width: 100%;
+  }
+  
+  .header-title {
+    text-align: center;
+  }
+}
+.table-container {
+  background: white;
   border-radius: 8px;
-  outline: none;
-  margin-left: auto; /* pushes it to far right */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 30px; /* Add padding to give space from edges */
+  margin: 0px;
+  overflow-x: auto; /* Keep the overflow for responsive tables */
 }
 
-.table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.table th {
-  background-color: #e5e5e5;
-  color: black;
-  padding: 10px;
-  text-align: center;
-  white-space: nowrap;
-}
-
-.table td {
-  padding: 10px;
-  text-align: center;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-/* Shrink ID column */
-.table th:first-child,
-.table td:first-child {
-  width: 1%; 
-  white-space: nowrap;
-}
-
-/* Shrink ID column */
-.records-table th:first-child,
-.records-table td:first-child {
-  width: 60px;   /* small fixed width */
-  white-space: nowrap;
-}
-
-/* Flexbox wrapper for title + search */
-.header-content {
+/* Update the table-header to remove the top padding since container now has padding */
+.table-header {
   display: flex;
-  justify-content: space-between; /* pushes title left, search right */
+  justify-content: space-between;
   align-items: center;
-  width: 100%;  /* ensures it takes full width of the table */
+  margin-bottom: 20px;
+  padding: 0; /* Remove padding since container now has padding */
+}
+
+
+/* Make sure responsive behavior still works */
+@media (max-width: 1200px) {
+  .table-container {
+    padding: 20px; /* Slightly less padding on smaller screens */
+    overflow-x: auto;
+  }
+  
+  .records-table {
+    min-width: 900px;
+  }
+}
+
+@media (max-width: 768px) {
+  .table-container {
+    padding: 15px; /* Even less padding on mobile */
+    margin: 10px;
+  }
+  
+  .Monthly-Records-container {
+    padding: 10px;
+  }
+}
+
+/* Make table scrollable on smaller screens */
+@media (max-width: 1200px) {
+  .table-container {
+    overflow-x: auto;
+  }
+  
+  .records-table {
+    min-width: 900px;
+  }
 }

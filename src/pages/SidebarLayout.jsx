@@ -90,7 +90,7 @@ const SidebarLayout = ({ children }) => {
                 onClick={() => navigate('/Monthly-Records')}
               >
                 <Clock size={20} />
-                <span>Monthly Record</span>
+                <span>Record Tracking</span>
               </button>
             </div>
 

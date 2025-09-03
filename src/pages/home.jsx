@@ -17,33 +17,29 @@ const StatCard = ({ icon: Icon, title, value, onClick }) => (
   </div>
 );
 
-
-
 const Home = () => {
   const location = useLocation();
   const [searchTerm, setSearchTerm] = useState("");
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [attendanceData, setAttendanceData] = useState([]);
-  const [modalVisible, setModalVisible] = useState(false); // stats modal (existing)
+  const [modalVisible, setModalVisible] = useState(false);
   const [modalTitle, setModalTitle] = useState('');
   const [filteredEmployees, setFilteredEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [viewModalVisible, setViewModalVisible] = useState(false);
-  const [employees, setEmployees] = useState([]); // all employees
-  // NEW: modals for add/remove
+  const [employees, setEmployees] = useState([]);
   const [addModalVisible, setAddModalVisible] = useState(false);
   const [removeModalVisible, setRemoveModalVisible] = useState(false);
 
   // Add Employee form state
   const [newEmp, setNewEmp] = useState({
-  name: '',
-  email: '',
-  phone_no: '',
-  position: '',
-  permanent_location: '',
-});
+    name: '',
+    email: '',
+    phone_no: '',
+    position: '',
+    permanent_location: '',
+  });
   const [photoFile, setPhotoFile] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [removeId, setRemoveId] = useState('');
@@ -62,6 +58,15 @@ const Home = () => {
     localStorage.getItem("username") ||
     "Admin";
 
+  // Get current date for display
+  const getCurrentDateString = () => {
+    return new Date().toLocaleDateString('en-US', { 
+      day: 'numeric', 
+      month: 'long', 
+      year: 'numeric' 
+    });
+  };
+
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(timer);
@@ -72,7 +77,9 @@ const Home = () => {
       try {
         setLoading(true);
         setError(null);
-        const res = await fetch(`http://localhost:5000/api/attendance?date=${selectedDate}`);
+        
+        const res = await fetch(`http://localhost:5000/api/attendance`);
+
         if (!res.ok) throw new Error("Failed to fetch data");
         const data = await res.json();
         setAttendanceData(data);
@@ -89,7 +96,7 @@ const Home = () => {
     const refreshHandler = () => fetchData();
     window.addEventListener("attendance-updated", refreshHandler);
     return () => window.removeEventListener("attendance-updated", refreshHandler);
-  }, [selectedDate]);
+  }, []);
 
   const calculateStats = (data) => {
     setStats({
@@ -145,50 +152,49 @@ const Home = () => {
   const onPhotoChange = (e) => {
     setPhotoFile(e.target.files?.[0] || null);
   };
-  const [popupMessage, setPopupMessage] = useState("");
+
   const handleAddSubmit = async (e) => {
-  e.preventDefault();
-  console.log("Submitting employee:", newEmp);  
-  if (!newEmp.name || !newEmp.email) {
-    alert('Please enter at least name and email.');
-    return;
-  }
+    e.preventDefault();
+    console.log("Submitting employee:", newEmp);  
+    if (!newEmp.name || !newEmp.email) {
+      alert('Please enter at least name and email.');
+      return;
+    }
 
-  try {
-    setSubmitting(true);
+    try {
+      setSubmitting(true);
 
-    const payload = {
-      name: newEmp.name,
-      email: newEmp.email,
-      phone_no: newEmp.phone_no,
-      position: newEmp.position,
-      permanent_location: newEmp.permanent_location,
-    };
+      const payload = {
+        name: newEmp.name,
+        email: newEmp.email,
+        phone_no: newEmp.phone_no,
+        position: newEmp.position,
+        permanent_location: newEmp.permanent_location,
+      };
 
-    const res = await fetch('http://localhost:5000/api/employees', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload),
-    });
+      const res = await fetch('http://localhost:5000/api/employees', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
 
-    const data = await res.json();
-if (!res.ok || !data.success) {
-  throw new Error(data.message || 'Failed to add employee');
-}
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.message || 'Failed to add employee');
+      }
 
-alert('Employee added successfully.');
-closeAddModal();
-window.dispatchEvent(new Event('attendance-updated'));
-  } catch (err) {
-    console.error(err);
-    alert('Error adding employee: ' + (err.message || err));
-  } finally {
-    setSubmitting(false);
-  }
-};
-
+      alert('Employee added successfully.');
+      closeAddModal();
+      window.dispatchEvent(new Event('attendance-updated'));
+    } catch (err) {
+      console.error(err);
+      alert('Error adding employee: ' + (err.message || err));
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   // Remove employee handlers
   const openRemoveModal = () => {
@@ -220,22 +226,20 @@ window.dispatchEvent(new Event('attendance-updated'));
     }
   };
 
-// new state for view employees modal
+  const openViewModal = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/api/viewemployees");
+      
+      const data = await res.json();
+      if (!data.success) throw new Error(data.message || "Failed to load employees");
+      setEmployees(data.employees);
+      setViewModalVisible(true);
+    } catch (err) {
+      alert("Error fetching employees: " + err.message);
+    }
+  };
 
-const openViewModal = async () => {
-  try {
-    const res = await fetch("http://localhost:5000/api/viewemployees");
-    
-    const data = await res.json();
-    if (!data.success) throw new Error(data.message || "Failed to load employees");
-    setEmployees(data.employees);
-    setViewModalVisible(true);
-  } catch (err) {
-    alert("Error fetching employees: " + err.message);
-  }
-};
-
-const closeViewModal = () => setViewModalVisible(false);
+  const closeViewModal = () => setViewModalVisible(false);
 
   return (
     <SidebarLayout currentTime={currentTime} username={username}>
@@ -289,7 +293,7 @@ const closeViewModal = () => setViewModalVisible(false);
         </div>
       </div>
 
-      {/* ADD EMPLOYEE Modal (custom styled like your mock) */}
+      {/* ADD EMPLOYEE Modal */}
       {addModalVisible && (
         <div className="modal-overlay" onClick={closeAddModal}>
           <div className="add-employee-modal" onClick={(e) => e.stopPropagation()}>
@@ -342,13 +346,13 @@ const closeViewModal = () => setViewModalVisible(false);
 
               <label className="form-field">
                 <span className="label-text">Branch</span>
-                 <input
-    type="text"
-    value={newEmp.permanent_location}
-    onChange={(e) => setNewEmp(prev => ({ ...prev, permanent_location: e.target.value }))}
-    placeholder="Enter branch location"
-  />
-</label>
+                <input
+                  type="text"
+                  value={newEmp.permanent_location}
+                  onChange={(e) => setNewEmp(prev => ({ ...prev, permanent_location: e.target.value }))}
+                  placeholder="Enter branch location"
+                />
+              </label>
 
               <label className="form-field upload-field">
                 <span className="label-text">Upload Photo</span>
@@ -361,11 +365,8 @@ const closeViewModal = () => setViewModalVisible(false);
                   {submitting ? 'Saving...' : 'Save Employee'}
                 </button>
               </div>
-              
             </form>
-            
           </div>
-          
         </div>
       )}
 
@@ -396,55 +397,57 @@ const closeViewModal = () => setViewModalVisible(false);
           </div>
         </div>
       )}
-{viewModalVisible && (
-  <div className="modal-overlay" onClick={closeViewModal}>
-    <div className="modal large-modal" onClick={(e) => e.stopPropagation()}>
-      <div className="modal-header">
-        <h3>All Employees</h3>
-        <button className="close-btn" onClick={closeViewModal}>✕</button>
-      </div>
-      <div className="modal-body">
-        {employees.length === 0 ? (
-          <p>No employees found.</p>
-        ) : (
-          <table className="employees-table">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Phone</th>
-                <th>Position</th>
-                <th>Branch</th>
-                <th>Date Joined</th>
-              </tr>
-            </thead>
-            <tbody>
-              {employees.map(emp => (
-                <tr key={emp.employee_id}>
-                  <td>{emp.employee_id}</td>
-                  <td>{emp.name}</td>
-                  <td>{emp.email}</td>
-                  <td>{emp.phone_no || "--"}</td>
-                  <td>{emp.position || "--"}</td>
-                  <td>{emp.permanent_location || "--"}</td>
-                  <td>{emp.date_joined ? new Date(emp.date_joined).toLocaleDateString() : "--"}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
-    </div>
-  </div>
-)}
+
+      {/* VIEW EMPLOYEES Modal */}
+      {viewModalVisible && (
+        <div className="modal-overlay" onClick={closeViewModal}>
+          <div className="modal large-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>All Employees</h3>
+              <button className="close-btn" onClick={closeViewModal}>✕</button>
+            </div>
+            <div className="modal-body">
+              {employees.length === 0 ? (
+                <p>No employees found.</p>
+              ) : (
+                <table className="employees-table">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Name</th>
+                      <th>Email</th>
+                      <th>Phone</th>
+                      <th>Position</th>
+                      <th>Branch</th>
+                      <th>Date Joined</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {employees.map(emp => (
+                      <tr key={emp.employee_id}>
+                        <td>{emp.employee_id}</td>
+                        <td>{emp.name}</td>
+                        <td>{emp.email}</td>
+                        <td>{emp.phone_no || "--"}</td>
+                        <td>{emp.position || "--"}</td>
+                        <td>{emp.permanent_location || "--"}</td>
+                        <td>{emp.date_joined ? new Date(emp.date_joined).toLocaleDateString() : "--"}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Attendance Table */}
       <div className="table-container">
         <div className="table-header">
           <h3 className="table-title">
-            Attendance Overview
-            <span className="employee-count">({stats.totalEmployees} Employees)</span>
+            Today's Attendance - {getCurrentDateString()}
+            <span className="employee-count">({stats.totalEmployees} Records)</span>
           </h3>
           <div className="table-actions">
             <input
@@ -473,11 +476,11 @@ const closeViewModal = () => setViewModalVisible(false);
             </thead>
             <tbody>
               {loading ? (
-                <tr><td colSpan="8">Loading...</td></tr>
+                <tr><td colSpan="8">Loading today's attendance...</td></tr>
               ) : error ? (
-                <tr><td colSpan="8">{error}</td></tr>
+                <tr><td colSpan="8">Error: {error}</td></tr>
               ) : attendanceData.length === 0 ? (
-                <tr><td colSpan="8">No data found for {formatTableDate(selectedDate)}</td></tr>
+                <tr><td colSpan="8">No attendance records found for {getCurrentDateString()}</td></tr>
               ) : (
                 attendanceData
                   .filter(e => e.emp_name.toLowerCase().includes(searchTerm.toLowerCase()))
