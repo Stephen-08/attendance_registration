@@ -132,6 +132,7 @@ const Section = ({ title, data, type, onStatusChange }) => {
               <>
                 <th>Employee ID</th>
                 <th>Employee</th>
+                <th>Branch</th>
                 <th>Requested At</th>
                 <th>Status</th>
               </>
@@ -155,8 +156,8 @@ const Section = ({ title, data, type, onStatusChange }) => {
                     <td>{entry.reason}</td>
                     <td>{entry.request_date}</td>
                     <td>
-                      {entry.status === "Accepted" || entry.status === "Rejected" ? (
-                        <span className={entry.status === "Accepted" ? "status-accept" : "status-reject"}>
+                      {entry.status === "Approved" || entry.status === "Rejected" ? (
+                        <span className={entry.status === "Approved" ? "status-accept" : "status-reject"}>
                           {entry.status}
                         </span>
                       ) : confirming.id === entry.request_id ? (
@@ -175,7 +176,7 @@ const Section = ({ title, data, type, onStatusChange }) => {
                           </button>
                           <button
                             className="accept-btn"
-                            onClick={() => confirmAction(entry.request_id, "Accepted")}
+                            onClick={() => confirmAction(entry.request_id, "Approved")}
                           >
                             Accept
                           </button>
@@ -187,6 +188,7 @@ const Section = ({ title, data, type, onStatusChange }) => {
                   <>
                     <td>{entry.employee_id}</td>
                     <td>{entry.name}</td>
+                     <td>{entry.branch}</td>
                     <td>{entry.requested_at}</td>
                     <td>
                       {entry.status === "Accepted" || entry.status === "Rejected" ? (
