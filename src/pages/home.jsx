@@ -34,6 +34,7 @@ const Home = () => {
 
   // Add Employee form state
   const [newEmp, setNewEmp] = useState({
+    employee_id:'',
     name: '',
     email: '',
     phone_no: '',
@@ -143,7 +144,7 @@ const Home = () => {
 
   // Add employee handlers
   const openAddModal = () => {
-    setNewEmp({ name: '', email: '', phone_no: '', position: '', permanent_location: '' });
+    setNewEmp({employee_id: '', name: '', email: '', phone_no: '', position: '', permanent_location: '' });
     setPhotoFile(null);
     setAddModalVisible(true);
   };
@@ -156,8 +157,8 @@ const Home = () => {
   const handleAddSubmit = async (e) => {
     e.preventDefault();
     console.log("Submitting employee:", newEmp);  
-    if (!newEmp.name || !newEmp.email) {
-      alert('Please enter at least name and email.');
+    if (!newEmp.name || !newEmp.employee_id) {
+      alert('Please enter name and employee id');
       return;
     }
 
@@ -165,6 +166,7 @@ const Home = () => {
       setSubmitting(true);
 
       const payload = {
+        employee_id:newEmp.employee_id,
         name: newEmp.name,
         email: newEmp.email,
         phone_no: newEmp.phone_no,
@@ -303,6 +305,18 @@ const Home = () => {
             </div>
 
             <form className="add-modal-body" onSubmit={handleAddSubmit}>
+
+              <label className="form-field">
+                <span className="label-text">Employee ID</span>
+                <input
+                  type="text"
+                  value={newEmp.employee_id}
+                  onChange={(e) => setNewEmp(prev => ({ ...prev, employee_id: e.target.value }))}
+                  placeholder="enter ID"
+                  required
+                />
+              </label>
+
               <label className="form-field">
                 <span className="label-text">Name</span>
                 <input
@@ -321,7 +335,7 @@ const Home = () => {
                   value={newEmp.email}
                   onChange={(e) => setNewEmp(prev => ({ ...prev, email: e.target.value }))}
                   placeholder="email@example.com"
-                  required
+                
                 />
               </label>
 
