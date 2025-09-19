@@ -9,7 +9,7 @@ const Requests = () => {
   // -------------------- FETCH FUNCTIONS --------------------
   const fetchLateArrival = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/late-arrival-requests");
+      const res = await fetch("http://82.112.231.172:5000/api/late-arrival-requests");
       const data = await res.json();
       setLateRequests(data);
     } catch (err) {
@@ -19,7 +19,7 @@ const Requests = () => {
 
   const fetchLeaveRequests = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/leave-requests");
+      const res = await fetch("http://82.112.231.172:5000/api/leave-requests");
       const data = await res.json();
       setLeaveRequests(data);
     } catch (err) {
@@ -35,7 +35,7 @@ const Requests = () => {
   // -------------------- STATUS HANDLERS --------------------
   const handleLateStatusChange = async (id, newStatus) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/late-arrival-requests/${id}/status`, {
+      const res = await fetch(`http://82.112.231.172:5000/api/late-arrival-requests/${id}/status`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus })
@@ -53,7 +53,7 @@ const Requests = () => {
 
   const handleLeaveStatusChange = async (id, newStatus) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/leave-requests/${id}/status`, {
+      const res = await fetch(`http://82.112.231.172:5000/api/leave-requests/${id}/status`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus })
