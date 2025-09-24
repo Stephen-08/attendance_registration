@@ -28,7 +28,7 @@ export default function CreateAccount() {
     }
 
     try {
-      const response = await fetch('http://82.112.231.172:5000/api/create-account', {
+      const response = await fetch('https://attendancebackend.duckdns.org/api/create-account', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

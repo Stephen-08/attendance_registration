@@ -33,7 +33,7 @@ const Monthly = () => {
   const fetchDynamicRecords = async (dateRange) => {
     setLoading(true);
     try {
-      const response = await fetch("http://82.112.231.172:5000/api/monthlyrecords/dynamic", {
+      const response = await fetch("https://attendancebackend.duckdns.org/api/monthlyrecords/dynamic", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
