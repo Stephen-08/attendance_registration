@@ -497,7 +497,10 @@ const Home = () => {
                 <tr><td colSpan="8">No attendance records found for {getCurrentDateString()}</td></tr>
               ) : (
                 attendanceData
-                  .filter(e => e.emp_name.toLowerCase().includes(searchTerm.toLowerCase()))
+                  .filter(e => 
+    e.emp_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    e.employee_id.toString().includes(searchTerm)
+  )
                   .map(e => (
                     <tr key={e.attendance_id}>
                       <td>{e.employee_id}</td>

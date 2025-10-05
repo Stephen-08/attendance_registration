@@ -95,6 +95,7 @@ const Requests = () => {
 // -------------------- REUSABLE SECTION --------------------
 const Section = ({ title, data, type, onStatusChange }) => {
   const [confirming, setConfirming] = useState({ id: null, action: null });
+  const [searchTerm, setSearchTerm] = useState("");
 
   const confirmAction = (id, action) => setConfirming({ id, action });
   const cancelAction = () => setConfirming({ id: null, action: null });
@@ -106,12 +107,25 @@ const Section = ({ title, data, type, onStatusChange }) => {
     }
   };
 
+  // Filter data based on search term
+  const filteredData = data.filter(entry => {
+    const searchLower = searchTerm.toLowerCase();
+    const matchesId = entry.employee_id.toString().includes(searchTerm);
+    const matchesName = entry.name.toLowerCase().includes(searchLower);
+    return matchesId || matchesName;
+  });
+
   return (
     <div className="request-section">
       <div className="section-header">
         <h2>{title}</h2>
         <div className="controls">
-          <input type="text" placeholder="🔍 Quick Search..." />
+          <input 
+            type="text" 
+            placeholder="🔍 Quick Search..." 
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
         </div>
       </div>
 
@@ -140,12 +154,14 @@ const Section = ({ title, data, type, onStatusChange }) => {
           </tr>
         </thead>
         <tbody>
-          {data.length === 0 ? (
+          {filteredData.length === 0 ? (
             <tr>
-              <td colSpan={type === "leave" ? 7 : 4}>No requests found</td>
+              <td colSpan={type === "leave" ? 7 : 5}>
+                {searchTerm ? "No matching requests found" : "No requests found"}
+              </td>
             </tr>
           ) : (
-            data.map((entry, i) => (
+            filteredData.map((entry, i) => (
               <tr key={i}>
                 {type === "leave" ? (
                   <>
@@ -188,7 +204,7 @@ const Section = ({ title, data, type, onStatusChange }) => {
                   <>
                     <td>{entry.employee_id}</td>
                     <td>{entry.name}</td>
-                     <td>{entry.branch}</td>
+                    <td>{entry.branch}</td>
                     <td>{entry.requested_at}</td>
                     <td>
                       {entry.status === "Accepted" || entry.status === "Rejected" ? (
