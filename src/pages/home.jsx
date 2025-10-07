@@ -108,7 +108,7 @@ const Home = () => {
         setLoading(true);
         setError(null);
         
-        const res = await fetch(`http://localhost:5000/api/attendance?date=${selectedDate}`);
+        const res = await fetch(`https://attendancebackend.duckdns.org/api/attendance?date=${selectedDate}`);
 
         if (!res.ok) throw new Error("Failed to fetch data");
         const data = await res.json();
@@ -254,7 +254,7 @@ const Home = () => {
 
       console.log('Sending update:', payload);
 
-      const res = await fetch('http://localhost:5000/api/update_attendance', {
+      const res = await fetch('https://attendancebackend.duckdns.org/api/update_attendance', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -304,7 +304,7 @@ const Home = () => {
         permanent_location: newEmp.permanent_location,
       };
 
-      const res = await fetch('http://localhost:5000/api/employees', {
+      const res = await fetch('https://attendancebackend.duckdns.org/api/employees', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -342,7 +342,7 @@ const Home = () => {
     }
     if (!window.confirm(`Remove employee with ID "${removeId}"?`)) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/employees/${encodeURIComponent(removeId)}`, {
+      const res = await fetch(`https://attendancebackend.duckdns.org/api/employees/${encodeURIComponent(removeId)}`, {
         method: 'DELETE'
       });
       if (!res.ok) {
@@ -360,7 +360,7 @@ const Home = () => {
 
   const openViewModal = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/viewemployees");
+      const res = await fetch("https://attendancebackend.duckdns.org/api/viewemployees");
       
       const data = await res.json();
       if (!data.success) throw new Error(data.message || "Failed to load employees");
