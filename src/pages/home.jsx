@@ -32,11 +32,27 @@ const Home = () => {
   const [addModalVisible, setAddModalVisible] = useState(false);
   const [removeModalVisible, setRemoveModalVisible] = useState(false);
   
+  const [updateModalVisible, setUpdateModalVisible] = useState(false);
+  const [updateData, setUpdateData] = useState({
+    attendance_id: '',
+    employee_name: '',
+    employee_id: '',
+    current_location: '',
+    status: '',
+    check_in_hour: '',
+    check_in_minute: '',
+    check_in_ampm: 'AM',
+    check_out_hour: '',
+    check_out_minute: '',
+    check_out_ampm: 'AM'
+  });
+
   // Add selectedDate state - defaults to today
   const [selectedDate, setSelectedDate] = useState(
     new Date().toISOString().split('T')[0]
   );
 
+  
   // Add Employee form state
   const [newEmp, setNewEmp] = useState({
     employee_id:'',
@@ -55,7 +71,6 @@ const Home = () => {
     onTime: 0,
     absent: 0,
     lateArrival: 0,
-    earlyDepartures: 0,
     timeOff: 0
   });
 
@@ -111,7 +126,7 @@ const Home = () => {
     const refreshHandler = () => fetchData();
     window.addEventListener("attendance-updated", refreshHandler);
     return () => window.removeEventListener("attendance-updated", refreshHandler);
-  }, [selectedDate]); // Add selectedDate as dependency
+  }, [selectedDate]);
 
   const calculateStats = (data) => {
     setStats({
@@ -119,7 +134,7 @@ const Home = () => {
       onTime: data.filter(d => d.status === 'Present').length,
       absent: data.filter(d => d.status === 'Absent').length,
       lateArrival: data.filter(d => d.status === 'Late').length,
-      earlyDepartures: data.filter(d => d.status === 'Early Departure').length,
+    
       timeOff: data.filter(d => d.status === 'On Leave').length,
     });
   };
@@ -155,6 +170,107 @@ const Home = () => {
   };
 
   const closeModal = () => setModalVisible(false);
+
+  const openUpdateModal = (record) => {
+    // Parse existing check-in time
+    let checkInHour = '', checkInMinute = '', checkInAmpm = 'AM';
+    if (record.check_in && record.check_in !== 'RUNE') {
+      const [hours, minutes] = record.check_in.split(':');
+      let hour = parseInt(hours, 10);
+      checkInAmpm = hour >= 12 ? 'PM' : 'AM';
+      checkInHour = (hour % 12 || 12).toString();
+      checkInMinute = minutes;
+    }
+
+    // Parse existing check-out time
+    let checkOutHour = '', checkOutMinute = '', checkOutAmpm = 'AM';
+    if (record.check_out && record.check_out !== 'RUNE') {
+      const [hours, minutes] = record.check_out.split(':');
+      let hour = parseInt(hours, 10);
+      checkOutAmpm = hour >= 12 ? 'PM' : 'AM';
+      checkOutHour = (hour % 12 || 12).toString();
+      checkOutMinute = minutes;
+    }
+
+    setUpdateData({
+      attendance_id: record.attendance_id,
+      employee_name: record.emp_name,
+      employee_id: record.employee_id,
+      current_location: record.current_location || '',
+      status: record.status || '',
+      check_in_hour: checkInHour,
+      check_in_minute: checkInMinute,
+      check_in_ampm: checkInAmpm,
+      check_out_hour: checkOutHour,
+      check_out_minute: checkOutMinute,
+      check_out_ampm: checkOutAmpm
+    });
+    setUpdateModalVisible(true);
+  };
+
+  const closeUpdateModal = () => setUpdateModalVisible(false);
+
+  const handleUpdateSubmit = async (e) => {
+    e.preventDefault();
+    
+    // Convert 12-hour format to 24-hour format for check-in
+    let checkIn = null;
+    if (updateData.check_in_hour && updateData.check_in_minute) {
+      let hour = parseInt(updateData.check_in_hour);
+      const minute = updateData.check_in_minute.toString().padStart(2, '0');
+      
+      if (updateData.check_in_ampm === 'PM' && hour !== 12) {
+        hour += 12;
+      } else if (updateData.check_in_ampm === 'AM' && hour === 12) {
+        hour = 0;
+      }
+      
+      checkIn = `${hour.toString().padStart(2, '0')}:${minute}:00`;
+    }
+    
+    // Convert 12-hour format to 24-hour format for check-out
+    let checkOut = null;
+    if (updateData.check_out_hour && updateData.check_out_minute) {
+      let hour = parseInt(updateData.check_out_hour);
+      const minute = updateData.check_out_minute.toString().padStart(2, '0');
+      
+      if (updateData.check_out_ampm === 'PM' && hour !== 12) {
+        hour += 12;
+      } else if (updateData.check_out_ampm === 'AM' && hour === 12) {
+        hour = 0;
+      }
+      
+      checkOut = `${hour.toString().padStart(2, '0')}:${minute}:00`;
+    }
+
+    try {
+      const payload = {
+        attendance_id: updateData.attendance_id,
+        current_location: updateData.current_location,
+        status: updateData.status,
+        check_in: checkIn,
+        check_out: checkOut
+      };
+
+      console.log('Sending update:', payload);
+
+      const res = await fetch('http://localhost:5000/api/update_attendance', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Update failed');
+      
+      alert('Attendance updated successfully!');
+      closeUpdateModal();
+      window.dispatchEvent(new Event('attendance-updated'));
+    } catch (err) {
+      console.error(err);
+      alert('Error updating attendance: ' + err.message);
+    }
+  };
 
   // Add employee handlers
   const openAddModal = () => {
@@ -224,7 +340,7 @@ const Home = () => {
       alert('Please enter an employee ID to remove.');
       return;
     }
-    if (!confirm(`Remove employee with ID "${removeId}"?`)) return;
+    if (!window.confirm(`Remove employee with ID "${removeId}"?`)) return;
     try {
       const res = await fetch(`http://localhost:5000/api/employees/${encodeURIComponent(removeId)}`, {
         method: 'DELETE'
@@ -264,9 +380,133 @@ const Home = () => {
         <StatCard icon={UserX} title="Absent" value={stats.absent} onClick={() => handleStatCardClick('Absent', 'Absent Employees')} />
         <StatCard icon={UserCheck} title="On Time" value={stats.onTime} onClick={() => handleStatCardClick('Present', 'On Time Employees')} />
         <StatCard icon={Clock} title="Late Arrival" value={stats.lateArrival} onClick={() => handleStatCardClick('Late', 'Late Arrivals')} />
-        <StatCard icon={Users} title="Early Departures" value={stats.earlyDepartures} onClick={() => handleStatCardClick('Early Departure', 'Early Departures')} />
+        
         <StatCard icon={Calendar} title="Time-off" value={stats.timeOff} onClick={() => handleStatCardClick('On Leave', 'On Leave Employees')} />
       </div>
+
+      {/* UPDATE ATTENDANCE Modal */}
+      {updateModalVisible && (
+        <div className="modal-overlay" onClick={closeUpdateModal}>
+          <div className="update-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <div>
+                <h3>Update Attendance</h3>
+                <p className="employee-info">
+                  {updateData.employee_name} &nbsp;
+                  <span className="employee-id">({updateData.employee_id})</span>
+                </p>
+              </div>
+              <button className="close-btn" onClick={closeUpdateModal}>✕</button>
+            </div>
+
+            <form className="update-form" onSubmit={handleUpdateSubmit}>
+              <label>
+                Current Location
+                <input
+                  type="text"
+                  value={updateData.current_location}
+                  onChange={(e) => setUpdateData({ ...updateData, current_location: e.target.value })}
+                />
+              </label>
+
+              <label>
+                Status
+                <select
+                  className="status-select"
+                  value={updateData.status}
+                  onChange={(e) => setUpdateData({ ...updateData, status: e.target.value })}
+                >
+                  <option value="">Select status</option>
+                  <option value="Present">Present</option>
+                  <option value="Absent">Absent</option>
+                  <option value="Late">Late</option>
+                  
+                  <option value="On Leave">On Leave</option>
+                </select>
+              </label>
+
+              <div className="time-fields">
+                <label>
+                  Check-in
+                  <div className="time-input-group">
+                    <input
+                      type="number"
+                      min="1"
+                      max="12"
+                      placeholder="hh"
+                      value={updateData.check_in_hour || ""}
+                      onChange={(e) =>
+                        setUpdateData({ ...updateData, check_in_hour: e.target.value })
+                      }
+                    />
+                    <span>:</span>
+                    <input
+                      type="number"
+                      min="0"
+                      max="59"
+                      placeholder="mm"
+                      value={updateData.check_in_minute || ""}
+                      onChange={(e) =>
+                        setUpdateData({ ...updateData, check_in_minute: e.target.value })
+                      }
+                    />
+                    <select
+                      value={updateData.check_in_ampm || "AM"}
+                      onChange={(e) =>
+                        setUpdateData({ ...updateData, check_in_ampm: e.target.value })
+                      }
+                    >
+                      <option value="AM">AM</option>
+                      <option value="PM">PM</option>
+                    </select>
+                  </div>
+                </label>
+
+                <label>
+                  Check-out
+                  <div className="time-input-group">
+                    <input
+                      type="number"
+                      min="1"
+                      max="12"
+                      placeholder="hh"
+                      value={updateData.check_out_hour || ""}
+                      onChange={(e) =>
+                        setUpdateData({ ...updateData, check_out_hour: e.target.value })
+                      }
+                    />
+                    <span>:</span>
+                    <input
+                      type="number"
+                      min="0"
+                      max="59"
+                      placeholder="mm"
+                      value={updateData.check_out_minute || ""}
+                      onChange={(e) =>
+                        setUpdateData({ ...updateData, check_out_minute: e.target.value })
+                      }
+                    />
+                    <select
+                      value={updateData.check_out_ampm || "AM"}
+                      onChange={(e) =>
+                        setUpdateData({ ...updateData, check_out_ampm: e.target.value })
+                      }
+                    >
+                      <option value="AM">AM</option>
+                      <option value="PM">PM</option>
+                    </select>
+                  </div>
+                </label>
+              </div>
+
+              <div className="update-form-actions">
+                <button type="button" className="btn-cancel" onClick={closeUpdateModal}>Cancel</button>
+                <button type="submit" className="btn-save">Save</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* Stats modal (existing listing modal) */}
       {modalVisible && (
@@ -319,7 +559,6 @@ const Home = () => {
             </div>
 
             <form className="add-modal-body" onSubmit={handleAddSubmit}>
-
               <label className="form-field">
                 <span className="label-text">Employee ID</span>
                 <input
@@ -349,7 +588,6 @@ const Home = () => {
                   value={newEmp.email}
                   onChange={(e) => setNewEmp(prev => ({ ...prev, email: e.target.value }))}
                   placeholder="email@example.com"
-                
                 />
               </label>
 
@@ -507,15 +745,16 @@ const Home = () => {
                 <th>Check-in</th>
                 <th>Check-out</th>
                 <th>Work Hours</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
               {loading ? (
-                <tr><td colSpan="8">Loading attendance...</td></tr>
+                <tr><td colSpan="9">Loading attendance...</td></tr>
               ) : error ? (
-                <tr><td colSpan="8">Error: {error}</td></tr>
+                <tr><td colSpan="9">Error: {error}</td></tr>
               ) : attendanceData.length === 0 ? (
-                <tr><td colSpan="8">No attendance records found for {formatSelectedDate(selectedDate)}</td></tr>
+                <tr><td colSpan="9">No attendance records found for {formatSelectedDate(selectedDate)}</td></tr>
               ) : (
                 attendanceData
                   .filter(e => 
@@ -536,6 +775,14 @@ const Home = () => {
                       <td>{formatTimeForTable(e.check_in)}</td>
                       <td>{formatTimeForTable(e.check_out)}</td>
                       <td>{calculateWorkHours(e.check_in, e.check_out)}</td>
+                      <td>
+                        <button
+                          className="btn-small"
+                          onClick={() => openUpdateModal(e)}
+                        >
+                        ✎ Update
+                        </button>
+                      </td>
                     </tr>
                   ))
               )}
