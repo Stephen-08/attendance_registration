@@ -72,6 +72,11 @@ body {
   box-shadow: 0 2px 6px rgba(0,0,0,0.08);
   text-align: center;
   cursor: pointer;
+  transition: transform 0.2s ease;
+}
+.employee-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(100, 39, 132, 0.15);
 }
 .employee-card h3 {
   font-size: 16px;
@@ -89,7 +94,10 @@ body {
   font-size: 14px;
   transition: background 0.2s;
 }
-.action-btn:hover { opacity: 0.95; }
+.action-btn:hover { 
+  background-color: #7c3aed;
+  opacity: 0.95; 
+}
 
 /* Table */
 .table-container {
@@ -107,23 +115,89 @@ body {
   border-bottom: 1px solid #e5e7eb;
 }
 
-.table-title { font-size: 18px; font-weight: 600; color: #111827; }
-.employee-count { font-size: 0.9rem; margin-left: 0.5rem; color: #555; }
+.table-title { 
+  font-size: 18px; 
+  font-weight: 600; 
+  color: #111827; 
+}
+.employee-count { 
+  font-size: 0.9rem; 
+  margin-left: 0.5rem; 
+  color: #6b7280;
+  font-weight: 400;
+}
 
-.table-actions { display: flex; align-items: center; }
+/* Table Actions - Date Picker & Search */
+.table-actions { 
+  display: flex; 
+  align-items: center; 
+  gap: 12px;
+}
 
-.search-input-small {
-  padding: 8px 14px;
-  border-radius: 20px;
-  border: 1px solid #ccc;
+/* Date Picker Styling */
+.date-picker {
+  padding: 10px 16px;
+  border: 2px solid #e0d4f7;
+  border-radius: 10px;
   font-size: 14px;
-  width: 220px;
+  font-weight: 500;
+  color: #642784;
+  background-color: #ffffff;
+  cursor: pointer;
+  transition: all 0.3s ease;
   outline: none;
-  transition: 0.2s ease all;
+  min-width: 160px;
+  font-family: inherit;
+}
+
+.date-picker:hover {
+  border-color: #9333ea;
+  background-color: #faf5ff;
+  box-shadow: 0 2px 8px rgba(147, 51, 234, 0.1);
+}
+
+.date-picker:focus {
+  border-color: #7c3aed;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+}
+
+/* Calendar icon styling for webkit browsers */
+.date-picker::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  filter: invert(27%) sepia(51%) saturate(2878%) hue-rotate(262deg) brightness(94%) contrast(93%);
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.date-picker::-webkit-calendar-picker-indicator:hover {
+  background-color: #f3e8ff;
+}
+
+/* Firefox date input styling */
+.date-picker::-moz-calendar-picker-indicator {
+  cursor: pointer;
+}
+
+/* Search Input */
+.search-input-small {
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: 2px solid #e0d4f7;
+  font-size: 14px;
+  min-width: 220px;
+  outline: none;
+  transition: all 0.3s ease;
+  color: #374151;
+  background-color: #ffffff;
 }
 .search-input-small:focus {
-  border-color: #a58af9;
-  box-shadow: 0 0 0 3px rgba(165, 138, 249, 0.2);
+  border-color: #7c3aed;
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+}
+.search-input-small::placeholder {
+  color: #9ca3af;
 }
 
 .table-wrapper { overflow-x: auto; }
@@ -145,10 +219,18 @@ body {
   font-size: 14px;
   color: #374151;
 }
-.attendance-table tr:hover { background-color: #fafafa; }
+.attendance-table tr:hover { 
+  background-color: #fafafa; 
+}
 
 /* Status Badges */
-.status-badge { padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; text-transform: capitalize; }
+.status-badge { 
+  padding: 4px 10px; 
+  border-radius: 12px; 
+  font-size: 12px; 
+  font-weight: 500; 
+  text-transform: capitalize; 
+}
 .status-badge.present { background: #d1fae5; color: #065f46; }
 .status-badge.late { background: #fef3c7; color: #92400e; }
 .status-badge.absent { background: #fee2e2; color: #991b1b; }
@@ -156,15 +238,58 @@ body {
 .status-badge.early-departure { background: #fce7f3; color: #be185d; }
 
 /* Base modal overlay & modal from before */
-.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.35); display: flex; align-items: center; justify-content: center; z-index: 999; }
-.modal { background: white; padding: 1.8rem; border-radius: 12px; width: 400px; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.2); animation: fadeIn 0.2s ease; }
-.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
-.modal-body { font-size: 14px; color: #374151; }
-.employee-list { list-style: none; padding: 0; }
-.employee-list li { padding: 0.6rem 0; border-bottom: 1px solid #f3f4f6; }
-.close-btn { background: none; border: none; font-size: 18px; cursor: pointer; color: #555; }
-.close-btn:hover { color: #111; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+.modal-overlay { 
+  position: fixed; 
+  inset: 0; 
+  background: rgba(0,0,0,0.35); 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  z-index: 999; 
+}
+.modal { 
+  background: white; 
+  padding: 1.8rem; 
+  border-radius: 12px; 
+  width: 400px; 
+  max-height: 80vh; 
+  overflow-y: auto; 
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2); 
+  animation: fadeIn 0.2s ease; 
+}
+.modal-header { 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  margin-bottom: 1rem; 
+}
+.modal-body { 
+  font-size: 14px; 
+  color: #374151; 
+}
+.employee-list { 
+  list-style: none; 
+  padding: 0; 
+}
+.employee-list li { 
+  padding: 0.6rem 0; 
+  border-bottom: 1px solid #f3f4f6; 
+}
+.close-btn { 
+  background: none; 
+  border: none; 
+  font-size: 18px; 
+  cursor: pointer; 
+  color: #555; 
+  transition: color 0.2s;
+}
+.close-btn:hover { 
+  color: #111; 
+}
+@keyframes fadeIn { 
+  from { opacity: 0; transform: translateY(-6px); } 
+  to { opacity: 1; transform: translateY(0); } 
+}
 
 /* Buttons used inside modals */
 .btn-primary {
@@ -174,6 +299,10 @@ body {
   padding: 8px 14px;
   border-radius: 8px;
   cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-primary:hover {
+  background: #7c3aed;
 }
 .btn-secondary {
   background: #fff;
@@ -182,6 +311,11 @@ body {
   padding: 8px 12px;
   border-radius: 8px;
   cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-secondary:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
 }
 
 /* ADD EMPLOYEE modal (custom form layout to match your mock) */
@@ -241,6 +375,7 @@ body {
   outline: none;
   font-size: 14px;
   background: #fff;
+  transition: all 0.2s;
 }
 .add-modal-body input:focus {
   border-color: #642784;
@@ -308,13 +443,31 @@ body {
   color: #555;
 }
 
-
 /* responsive adjustments */
 @media (max-width: 780px) {
-  .add-modal-body { grid-template-columns: 1fr; }
-  .employee-management { flex-direction: column; gap: 12px; }
-  .employee-card { width: 100%; }
-  .search-input-small { width: 160px; }
+  .add-modal-body { 
+    grid-template-columns: 1fr; 
+  }
+  .employee-management { 
+    flex-direction: column; 
+    gap: 12px; 
+  }
+  .employee-card { 
+    width: 100%; 
+  }
+  .table-actions {
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+  }
+  .date-picker,
+  .search-input-small { 
+    width: 100%;
+    min-width: auto;
+  }
+  .table-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
 }
-
-

@@ -31,6 +31,11 @@ const Home = () => {
   const [employees, setEmployees] = useState([]);
   const [addModalVisible, setAddModalVisible] = useState(false);
   const [removeModalVisible, setRemoveModalVisible] = useState(false);
+  
+  // Add selectedDate state - defaults to today
+  const [selectedDate, setSelectedDate] = useState(
+    new Date().toISOString().split('T')[0]
+  );
 
   // Add Employee form state
   const [newEmp, setNewEmp] = useState({
@@ -68,6 +73,15 @@ const Home = () => {
     });
   };
 
+  // Format selected date for display
+  const formatSelectedDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString('en-US', { 
+      day: 'numeric', 
+      month: 'long', 
+      year: 'numeric' 
+    });
+  };
+
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(timer);
@@ -79,7 +93,7 @@ const Home = () => {
         setLoading(true);
         setError(null);
         
-        const res = await fetch(`https://attendancebackend.duckdns.org/api/attendance`);
+        const res = await fetch(`http://localhost:5000/api/attendance?date=${selectedDate}`);
 
         if (!res.ok) throw new Error("Failed to fetch data");
         const data = await res.json();
@@ -97,7 +111,7 @@ const Home = () => {
     const refreshHandler = () => fetchData();
     window.addEventListener("attendance-updated", refreshHandler);
     return () => window.removeEventListener("attendance-updated", refreshHandler);
-  }, []);
+  }, [selectedDate]); // Add selectedDate as dependency
 
   const calculateStats = (data) => {
     setStats({
@@ -174,7 +188,7 @@ const Home = () => {
         permanent_location: newEmp.permanent_location,
       };
 
-      const res = await fetch('https://attendancebackend.duckdns.org/api/employees', {
+      const res = await fetch('http://localhost:5000/api/employees', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -212,7 +226,7 @@ const Home = () => {
     }
     if (!confirm(`Remove employee with ID "${removeId}"?`)) return;
     try {
-      const res = await fetch(`https://attendancebackend.duckdns.org/api/employees/${encodeURIComponent(removeId)}`, {
+      const res = await fetch(`http://localhost:5000/api/employees/${encodeURIComponent(removeId)}`, {
         method: 'DELETE'
       });
       if (!res.ok) {
@@ -230,7 +244,7 @@ const Home = () => {
 
   const openViewModal = async () => {
     try {
-      const res = await fetch("https://attendancebackend.duckdns.org/api/viewemployees");
+      const res = await fetch("http://localhost:5000/api/viewemployees");
       
       const data = await res.json();
       if (!data.success) throw new Error(data.message || "Failed to load employees");
@@ -460,10 +474,17 @@ const Home = () => {
       <div className="table-container">
         <div className="table-header">
           <h3 className="table-title">
-            Today's Attendance - {getCurrentDateString()}
+            Attendance - {formatSelectedDate(selectedDate)}
             <span className="employee-count">({stats.totalEmployees} Records)</span>
           </h3>
           <div className="table-actions">
+            <input
+              type="date"
+              value={selectedDate}
+              onChange={(e) => setSelectedDate(e.target.value)}
+              className="date-picker"
+              max={new Date().toISOString().split('T')[0]}
+            />
             <input
               type="text"
               placeholder="🔍 Search employee..."
@@ -490,17 +511,17 @@ const Home = () => {
             </thead>
             <tbody>
               {loading ? (
-                <tr><td colSpan="8">Loading today's attendance...</td></tr>
+                <tr><td colSpan="8">Loading attendance...</td></tr>
               ) : error ? (
                 <tr><td colSpan="8">Error: {error}</td></tr>
               ) : attendanceData.length === 0 ? (
-                <tr><td colSpan="8">No attendance records found for {getCurrentDateString()}</td></tr>
+                <tr><td colSpan="8">No attendance records found for {formatSelectedDate(selectedDate)}</td></tr>
               ) : (
                 attendanceData
                   .filter(e => 
-    e.emp_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    e.employee_id.toString().includes(searchTerm)
-  )
+                    e.emp_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    e.employee_id.toString().includes(searchTerm)
+                  )
                   .map(e => (
                     <tr key={e.attendance_id}>
                       <td>{e.employee_id}</td>
