@@ -22,7 +22,7 @@
 }
 .logo { display: flex; align-items: center; gap: 0.5rem; }
 .logo-image {
-  width: 40px; height: 40px;
+  width: 150px; height: 90px;
   border-radius: 8px;
 }
 .header-actions {
@@ -50,51 +50,51 @@
 }
 .logout-btn:hover { background-color: #f3f4f6; color: #374151; }
 
-/* Main content */
+/* Main content - UPDATED FOR BETTER SPACING */
 .main-content {
   flex: 1;
   display: flex;
   max-width: 1800px;
-  margin: 0 auto;
+  margin: AUTO;
   width: 100%;
-  padding: 2rem;
-  gap: 2rem;
+  padding: 2.5rem 3rem; /* Increased padding */
+  gap: 3rem; /* Increased gap between sidebar and content */
   background-color: #F6E9FE;
 }
 
 /* Sidebar */
 .sidebar {
-  width: 320px;
+  width: 280px; /* Slightly wider */
   flex-shrink: 0;
 }
 .sidebar-card {
   background: white;
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-radius: 16px; /* Larger radius */
+  padding: 2rem; /* More padding */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); /* Softer shadow */
   height: fit-content;
 }
 .sidebar-title {
-  font-size: 18px;
+  font-size: 20px; /* Larger title */
   font-weight: 600;
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem; /* More space below title */
   color: #111827;
 }
-.nav-menu { margin-bottom: 2rem; }
+.nav-menu { margin-bottom: 2.5rem; } /* More space */
 .nav-item {
   width: 100%;
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 12px 16px;
+  padding: 14px 18px; /* More padding */
   border: none;
   background: none;
-  border-radius: 8px;
+  border-radius: 10px; /* Larger radius */
   cursor: pointer;
-  font-size: 14px;
+  font-size: 15px; /* Slightly larger font */
   color: #6b7280;
   transition: all 0.2s;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.75rem; /* More space between items */
 }
 .nav-item:hover { background-color: #f3f4f6; color: #374151; }
 .nav-item.active { background-color: #642784; color: white; }
@@ -105,29 +105,30 @@
 /* Time Widget */
 .time-widget {
   border-top: 1px solid #e5e7eb;
-  padding-top: 1.5rem;
+  padding-top: 2rem; /* More padding */
   text-align: center;
 }
-.time-display { margin-bottom: 1rem; }
+.time-display { margin-bottom: 1.5rem; } /* More space */
 .current-time {
-  font-size: 24px;
+  font-size: 28px; /* Larger time */
   font-weight: 600;
   color: #111827;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.75rem; /* More space */
 }
 .time-label {
-  font-size: 12px;
+  font-size: 13px; /* Slightly larger */
   color: #6b7280;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem; /* More space */
 }
 .date-info p {
-  font-size: 12px;
+  font-size: 13px; /* Slightly larger */
   color: #6b7280;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.5rem; /* More space */
 }
 
 /* Dashboard Content */
 .dashboard-content {
   flex: 1;
   min-width: 0;
+  padding: 0.5rem 0; /* Added vertical padding */
 }
