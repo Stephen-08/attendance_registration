@@ -31,6 +31,7 @@ const Home = () => {
   const [employees, setEmployees] = useState([]);
   const [addModalVisible, setAddModalVisible] = useState(false);
   const [removeModalVisible, setRemoveModalVisible] = useState(false);
+  const [editModalVisible, setEditModalVisible] = useState(false);
   
   const [updateModalVisible, setUpdateModalVisible] = useState(false);
   const [updateData, setUpdateData] = useState({
@@ -47,13 +48,10 @@ const Home = () => {
     check_out_ampm: 'AM'
   });
 
-  // Add selectedDate state - defaults to today
   const [selectedDate, setSelectedDate] = useState(
     new Date().toISOString().split('T')[0]
   );
 
-  
-  // Add Employee form state
   const [newEmp, setNewEmp] = useState({
     employee_id:'',
     name: '',
@@ -62,6 +60,16 @@ const Home = () => {
     position: '',
     permanent_location: '',
   });
+
+  const [editEmp, setEditEmp] = useState({
+    employee_id: '',
+    name: '',
+    email: '',
+    phone_no: '',
+    position: '',
+    permanent_location: '',
+  });
+
   const [photoFile, setPhotoFile] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [removeId, setRemoveId] = useState('');
@@ -79,7 +87,6 @@ const Home = () => {
     localStorage.getItem("username") ||
     "Admin";
 
-  // Get current date for display
   const getCurrentDateString = () => {
     return new Date().toLocaleDateString('en-US', { 
       day: 'numeric', 
@@ -88,7 +95,6 @@ const Home = () => {
     });
   };
 
-  // Format selected date for display
   const formatSelectedDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('en-US', { 
       day: 'numeric', 
@@ -108,7 +114,7 @@ const Home = () => {
         setLoading(true);
         setError(null);
         
-        const res = await fetch(`https://attendancebackend.duckdns.org/api/attendance?date=${selectedDate}`);
+        const res = await fetch(`http://localhost:5000/api/attendance?date=${selectedDate}`);
 
         if (!res.ok) throw new Error("Failed to fetch data");
         const data = await res.json();
@@ -134,7 +140,6 @@ const Home = () => {
       onTime: data.filter(d => d.status === 'Present').length,
       absent: data.filter(d => d.status === 'Absent').length,
       lateArrival: data.filter(d => d.status === 'Late').length,
-    
       timeOff: data.filter(d => d.status === 'On Leave').length,
     });
   };
@@ -172,7 +177,6 @@ const Home = () => {
   const closeModal = () => setModalVisible(false);
 
   const openUpdateModal = (record) => {
-    // Parse existing check-in time
     let checkInHour = '', checkInMinute = '', checkInAmpm = 'AM';
     if (record.check_in && record.check_in !== 'RUNE') {
       const [hours, minutes] = record.check_in.split(':');
@@ -182,7 +186,6 @@ const Home = () => {
       checkInMinute = minutes;
     }
 
-    // Parse existing check-out time
     let checkOutHour = '', checkOutMinute = '', checkOutAmpm = 'AM';
     if (record.check_out && record.check_out !== 'RUNE') {
       const [hours, minutes] = record.check_out.split(':');
@@ -213,7 +216,6 @@ const Home = () => {
   const handleUpdateSubmit = async (e) => {
     e.preventDefault();
     
-    // Convert 12-hour format to 24-hour format for check-in
     let checkIn = null;
     if (updateData.check_in_hour && updateData.check_in_minute) {
       let hour = parseInt(updateData.check_in_hour);
@@ -228,7 +230,6 @@ const Home = () => {
       checkIn = `${hour.toString().padStart(2, '0')}:${minute}:00`;
     }
     
-    // Convert 12-hour format to 24-hour format for check-out
     let checkOut = null;
     if (updateData.check_out_hour && updateData.check_out_minute) {
       let hour = parseInt(updateData.check_out_hour);
@@ -252,9 +253,7 @@ const Home = () => {
         check_out: checkOut
       };
 
-      console.log('Sending update:', payload);
-
-      const res = await fetch('https://attendancebackend.duckdns.org/api/update_attendance', {
+      const res = await fetch('http://localhost:5000/api/update_attendance', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -286,7 +285,6 @@ const Home = () => {
 
   const handleAddSubmit = async (e) => {
     e.preventDefault();
-    console.log("Submitting employee:", newEmp);  
     if (!newEmp.name || !newEmp.employee_id) {
       alert('Please enter name and employee id');
       return;
@@ -304,7 +302,7 @@ const Home = () => {
         permanent_location: newEmp.permanent_location,
       };
 
-      const res = await fetch('https://attendancebackend.duckdns.org/api/employees', {
+      const res = await fetch('http://localhost:5000/api/employees', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -328,6 +326,85 @@ const Home = () => {
     }
   };
 
+  // Edit employee handlers
+  const openEditModal = () => {
+    setEditEmp({ employee_id: '', name: '', email: '', phone_no: '', position: '', permanent_location: '' });
+    setEditModalVisible(true);
+  };
+  const closeEditModal = () => setEditModalVisible(false);
+
+  const handleLoadEmployee = async () => {
+    if (!editEmp.employee_id) {
+      alert('Please enter employee ID first');
+      return;
+    }
+
+    try {
+      const res = await fetch(`http://localhost:5000/api/employees/${encodeURIComponent(editEmp.employee_id)}`);
+      const data = await res.json();
+      
+      if (!res.ok || !data.success) {
+        throw new Error(data.message || 'Employee not found');
+      }
+
+      setEditEmp({
+        employee_id: data.employee.employee_id,
+        name: data.employee.name || '',
+        email: data.employee.email || '',
+        phone_no: data.employee.phone_no || '',
+        position: data.employee.position || '',
+        permanent_location: data.employee.permanent_location || '',
+      });
+      alert('Employee details loaded');
+    } catch (err) {
+      console.error(err);
+      alert('Error loading employee: ' + (err.message || err));
+    }
+  };
+
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    if (!editEmp.employee_id) {
+      alert('Please enter employee ID');
+      return;
+    }
+
+    try {
+      setSubmitting(true);
+
+      const payload = {
+        employee_id: editEmp.employee_id,
+        name: editEmp.name || null,
+        email: editEmp.email || null,
+        phone_no: editEmp.phone_no || null,
+        position: editEmp.position || null,
+        permanent_location: editEmp.permanent_location || null,
+      };
+
+      const res = await fetch('http://localhost:5000/api/editemployees', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.message || 'Failed to update employee');
+      }
+
+      alert('Employee updated successfully.');
+      closeEditModal();
+      window.dispatchEvent(new Event('attendance-updated'));
+    } catch (err) {
+      console.error(err);
+      alert('Error updating employee: ' + (err.message || err));
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   // Remove employee handlers
   const openRemoveModal = () => {
     setRemoveId('');
@@ -342,7 +419,7 @@ const Home = () => {
     }
     if (!window.confirm(`Remove employee with ID "${removeId}"?`)) return;
     try {
-      const res = await fetch(`https://attendancebackend.duckdns.org/api/employees/${encodeURIComponent(removeId)}`, {
+      const res = await fetch(`http://localhost:5000/api/employees/${encodeURIComponent(removeId)}`, {
         method: 'DELETE'
       });
       if (!res.ok) {
@@ -360,7 +437,7 @@ const Home = () => {
 
   const openViewModal = async () => {
     try {
-      const res = await fetch("https://attendancebackend.duckdns.org/api/viewemployees");
+      const res = await fetch("http://localhost:5000/api/viewemployees");
       
       const data = await res.json();
       if (!data.success) throw new Error(data.message || "Failed to load employees");
@@ -380,7 +457,6 @@ const Home = () => {
         <StatCard icon={UserX} title="Absent" value={stats.absent} onClick={() => handleStatCardClick('Absent', 'Absent Employees')} />
         <StatCard icon={UserCheck} title="On Time" value={stats.onTime} onClick={() => handleStatCardClick('Present', 'On Time Employees')} />
         <StatCard icon={Clock} title="Late Arrival" value={stats.lateArrival} onClick={() => handleStatCardClick('Late', 'Late Arrivals')} />
-        
         <StatCard icon={Calendar} title="Time-off" value={stats.timeOff} onClick={() => handleStatCardClick('On Leave', 'On Leave Employees')} />
       </div>
 
@@ -420,7 +496,6 @@ const Home = () => {
                   <option value="Present">Present</option>
                   <option value="Absent">Absent</option>
                   <option value="Late">Late</option>
-                  
                   <option value="On Leave">On Leave</option>
                 </select>
               </label>
@@ -508,7 +583,7 @@ const Home = () => {
         </div>
       )}
 
-      {/* Stats modal (existing listing modal) */}
+      {/* Stats modal */}
       {modalVisible && (
         <div className="modal-overlay" onClick={closeModal}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
@@ -538,6 +613,10 @@ const Home = () => {
         <div className="employee-card add-employee" onClick={openAddModal}>
           <h3>Add Employee</h3>
           <button className="action-btn" type="button">+ Add</button>
+        </div>
+        <div className="employee-card edit-employee" onClick={openEditModal}>
+          <h3>Edit Employee</h3>
+          <button className="action-btn" type="button">✎ Edit</button>
         </div>
         <div className="employee-card remove-employee" onClick={openRemoveModal}>
           <h3>Remove Employee</h3>
@@ -629,6 +708,97 @@ const Home = () => {
                 <button type="button" className="btn-secondary" onClick={closeAddModal} disabled={submitting}>Cancel</button>
                 <button type="submit" className="btn-primary" disabled={submitting}>
                   {submitting ? 'Saving...' : 'Save Employee'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* EDIT EMPLOYEE Modal */}
+      {editModalVisible && (
+        <div className="modal-overlay" onClick={closeEditModal}>
+          <div className="add-employee-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="add-modal-header">
+              <h2>Edit Employee INFO</h2>
+              <button className="close-btn" onClick={closeEditModal}>✕</button>
+            </div>
+
+            <form className="add-modal-body" onSubmit={handleEditSubmit}>
+              <label className="form-field" style={{ gridColumn: '1 / -1' }}>
+                <span className="label-text">Employee ID</span>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <input
+                    type="text"
+                    value={editEmp.employee_id}
+                    onChange={(e) => setEditEmp(prev => ({ ...prev, employee_id: e.target.value }))}
+                    placeholder="Enter ID to edit"
+                    required
+                    style={{ flex: 1 }}
+                  />
+                  <button
+                    type="button"
+                    className="btn-load-details"
+                    onClick={handleLoadEmployee}
+                  >
+                    Load Details
+                  </button>
+                </div>
+              </label>
+
+              <label className="form-field">
+                <span className="label-text">Name</span>
+                <input
+                  type="text"
+                  value={editEmp.name}
+                  onChange={(e) => setEditEmp(prev => ({ ...prev, name: e.target.value }))}
+                  placeholder="Full name"
+                />
+              </label>
+
+              <label className="form-field">
+                <span className="label-text">email id</span>
+                <input
+                  type="email"
+                  value={editEmp.email}
+                  onChange={(e) => setEditEmp(prev => ({ ...prev, email: e.target.value }))}
+                  placeholder="email@example.com"
+                />
+              </label>
+
+              <label className="form-field">
+                <span className="label-text">phone no.</span>
+                <input
+                  type="tel"
+                  value={editEmp.phone_no}
+                  onChange={(e) => setEditEmp(prev => ({ ...prev, phone_no: e.target.value }))}
+                  placeholder="+91 55555 55555"
+                />
+              </label>
+
+              <label className="form-field">
+                <span className="label-text">position</span>
+                <input
+                  type="text"
+                  value={editEmp.position}
+                  onChange={(e) => setEditEmp(prev => ({ ...prev, position: e.target.value }))}
+                />
+              </label>
+
+              <label className="form-field">
+                <span className="label-text">Branch</span>
+                <input
+                  type="text"
+                  value={editEmp.permanent_location}
+                  onChange={(e) => setEditEmp(prev => ({ ...prev, permanent_location: e.target.value }))}
+                  placeholder="Enter branch location"
+                />
+              </label>
+
+              <div className="add-modal-actions">
+                <button type="button" className="btn-secondary" onClick={closeEditModal} disabled={submitting}>Cancel</button>
+                <button type="submit" className="btn-primary" disabled={submitting}>
+                  {submitting ? 'Updating...' : 'Update Employee'}
                 </button>
               </div>
             </form>

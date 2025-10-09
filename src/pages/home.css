@@ -14,19 +14,20 @@ body {
 /* Stats Grid */
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); /* Slightly larger cards */
-  gap: 2rem; /* More gap between cards */
-  margin-bottom: 2.5rem; /* More space below stats */
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2.5rem;
 }
 
 .stat-card {
   background: white;
-  border-radius: 16px; /* Larger radius */
-  padding: 2rem; /* More padding */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Softer, larger shadow */
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   transition: transform 0.2s ease;
   cursor: pointer;
 }
+
 .stat-card:hover {
   transform: translateY(-3px);
 }
@@ -59,17 +60,18 @@ body {
 /* Employee management cards (above table) */
 .employee-management {
   display: flex;
-  gap: 24px; /* More gap between cards */
-  margin-bottom: 2.5rem; /* More space below cards */
+  gap: 24px;
+  margin-bottom: 2.5rem;
   align-items: flex-start;
+  flex-wrap: wrap;
 }
 
 .employee-card {
   background: #fff;
-  border-radius: 16px; /* Larger radius */
-  padding: 20px; /* More padding */
-  width: 220px; /* Slightly wider */
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08); /* Softer shadow */
+  border-radius: 16px;
+  padding: 20px;
+  width: 220px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
   text-align: center;
   cursor: pointer;
   transition: transform 0.2s ease;
@@ -79,12 +81,14 @@ body {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(100, 39, 132, 0.15);
 }
+
 .employee-card h3 {
   font-size: 16px;
   font-weight: 600;
-  margin-bottom: 16px; /* More space */
+  margin-bottom: 16px;
   color: #333;
 }
+
 .action-btn {
   background-color: #642784;
   color: white;
@@ -95,33 +99,44 @@ body {
   font-size: 14px;
   transition: background 0.2s;
 }
+
 .action-btn:hover { 
   background-color: #7c3aed;
   opacity: 0.95; 
 }
 
+/* Specific card colors */
+.employee-card.edit-employee {
+  border: 2px solid #f3e8ff;
+}
+
+.employee-card.edit-employee:hover {
+  border-color: #9333ea;
+}
+
 /* Table */
 .table-container {
   background: white;
-  border-radius: 16px; /* Larger radius */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Softer shadow */
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   overflow: hidden;
-  margin-bottom: 2rem; /* Space below table */
+  margin-bottom: 2rem;
 }
 
 .table-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.5rem 2rem; /* More padding */
+  padding: 1.5rem 2rem;
   border-bottom: 1px solid #e5e7eb;
 }
 
 .table-title { 
-  font-size: 20px; /* Larger title */
+  font-size: 20px;
   font-weight: 600; 
   color: #111827; 
 }
+
 .employee-count { 
   font-size: 0.9rem; 
   margin-left: 0.5rem; 
@@ -164,7 +179,6 @@ body {
   box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
 }
 
-/* Calendar icon styling for webkit browsers */
 .date-picker::-webkit-calendar-picker-indicator {
   cursor: pointer;
   filter: invert(27%) sepia(51%) saturate(2878%) hue-rotate(262deg) brightness(94%) contrast(93%);
@@ -177,7 +191,6 @@ body {
   background-color: #f3e8ff;
 }
 
-/* Firefox date input styling */
 .date-picker::-moz-calendar-picker-indicator {
   cursor: pointer;
 }
@@ -194,10 +207,12 @@ body {
   color: #374151;
   background-color: #ffffff;
 }
+
 .search-input-small:focus {
   border-color: #7c3aed;
   box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
 }
+
 .search-input-small::placeholder {
   color: #9ca3af;
 }
@@ -210,67 +225,66 @@ body {
 .attendance-table { 
   width: 100%; 
   border-collapse: collapse;
-  table-layout: auto; /* CHANGED from fixed to auto */
-  min-width: 900px; /* Added minimum width to prevent squeezing */
+  table-layout: auto;
+  min-width: 900px;
 }
 
 .attendance-table th {
   background: #f9fafb;
-  padding: 16px 20px; /* More padding */
+  padding: 16px 20px;
   text-align: left;
-  font-size: 13px; /* Slightly larger */
+  font-size: 13px;
   font-weight: 600;
   color: #374151;
   text-transform: uppercase;
   border-bottom: 1px solid #e5e7eb;
   white-space: nowrap;
 }
-/* Define specific column widths to prevent overlapping */
-.attendance-table th:nth-child(1), /* ID */
+
+.attendance-table th:nth-child(1), 
 .attendance-table td:nth-child(1) {
-  width: auto; /* Wider */
+  width: auto;
   min-width: auto;
 }
 
-.attendance-table th:nth-child(2), /* EMPLOYEE */
+.attendance-table th:nth-child(2),
 .attendance-table td:nth-child(2) {
-  width: auto; /* Wider */
+  width: auto;
   min-width: auto;
 }
 
-.attendance-table th:nth-child(3), /* CURRENT LOCATION */
+.attendance-table th:nth-child(3),
 .attendance-table td:nth-child(3) {
-  width: auto; /* Wider */
+  width: auto;
   min-width: auto;
 }
 
-.attendance-table th:nth-child(4), /* STATUS */
+.attendance-table th:nth-child(4),
 .attendance-table td:nth-child(4) {
-  width: auto; /* Wider */
+  width: auto;
   min-width:auto;
 }
 
-.attendance-table th:nth-child(5), /* CHECK IN */
+.attendance-table th:nth-child(5),
 .attendance-table td:nth-child(5) {
-  width: auto; /* Wider */
+  width: auto;
   min-width: auto;
 }
 
-.attendance-table th:nth-child(6), /* CHECK-OUT */
+.attendance-table th:nth-child(6),
 .attendance-table td:nth-child(6) {
-  width: auto; /* Wider */
+  width: auto;
   min-width: auto;
 }
 
-.attendance-table th:nth-child(7), /* WORK HOURS */
+.attendance-table th:nth-child(7),
 .attendance-table td:nth-child(7) {
-  width: auto; /* Wider */
+  width: auto;
   min-width: auto;
 }
-
 
 .attendance-table td {
-  padding: 18px 20px; /* More padding */
+  padding: 18px 20px;
   border-bottom: 1px solid #f3f4f6;
   font-size: 14px;
   color: #374151;
@@ -285,21 +299,41 @@ body {
 
 /* Status Badges */
 .status-badge { 
-  padding: 6px 14px; /* More padding */
-  border-radius: 14px; /* Larger radius */
-  font-size: 13px; /* Slightly larger */
+  padding: 6px 14px;
+  border-radius: 14px;
+  font-size: 13px;
   font-weight: 500; 
   text-transform: capitalize; 
   display: inline-block;
   white-space: nowrap;
 }
-.status-badge.present { background: #d1fae5; color: #065f46; }
-.status-badge.late { background: #fef3c7; color: #92400e; }
-.status-badge.absent { background: #fee2e2; color: #991b1b; }
-.status-badge.on-leave { background: #dbeafe; color: #1e40af; }
-.status-badge.early-departure { background: #fce7f3; color: #be185d; }
 
-/* Base modal overlay & modal from before */
+.status-badge.present { 
+  background: #d1fae5; 
+  color: #065f46; 
+}
+
+.status-badge.late { 
+  background: #fef3c7; 
+  color: #92400e; 
+}
+
+.status-badge.absent { 
+  background: #fee2e2; 
+  color: #991b1b; 
+}
+
+.status-badge.on-leave { 
+  background: #dbeafe; 
+  color: #1e40af; 
+}
+
+.status-badge.early-departure { 
+  background: #fce7f3; 
+  color: #be185d; 
+}
+
+/* Base modal overlay & modal */
 .modal-overlay { 
   position: fixed; 
   inset: 0; 
@@ -309,6 +343,7 @@ body {
   justify-content: center; 
   z-index: 999; 
 }
+
 .modal { 
   background: white; 
   padding: 1.8rem; 
@@ -319,24 +354,29 @@ body {
   box-shadow: 0 10px 25px rgba(0,0,0,0.2); 
   animation: fadeIn 0.2s ease; 
 }
+
 .modal-header { 
   display: flex; 
   justify-content: space-between; 
   align-items: center; 
   margin-bottom: 1rem; 
 }
+
 .modal-body { 
   font-size: 14px; 
   color: #374151; 
 }
+
 .employee-list { 
   list-style: none; 
   padding: 0; 
 }
+
 .employee-list li { 
   padding: 0.6rem 0; 
   border-bottom: 1px solid #f3f4f6; 
 }
+
 .close-btn { 
   background: none; 
   border: none; 
@@ -345,12 +385,20 @@ body {
   color: #555; 
   transition: color 0.2s;
 }
+
 .close-btn:hover { 
   color: #111; 
 }
+
 @keyframes fadeIn { 
-  from { opacity: 0; transform: translateY(-6px); } 
-  to { opacity: 1; transform: translateY(0); } 
+  from { 
+    opacity: 0; 
+    transform: translateY(-6px); 
+  } 
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  } 
 }
 
 /* Buttons used inside modals */
@@ -363,9 +411,16 @@ body {
   cursor: pointer;
   transition: background 0.2s;
 }
+
 .btn-primary:hover {
   background: #7c3aed;
 }
+
+.btn-primary:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
 .btn-secondary {
   background: #fff;
   color: #333;
@@ -375,12 +430,42 @@ body {
   cursor: pointer;
   transition: all 0.2s;
 }
+
 .btn-secondary:hover {
   background: #f9fafb;
   border-color: #9ca3af;
 }
 
-/* ADD EMPLOYEE modal (custom form layout to match your mock) */
+.btn-secondary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Load Details button - Purple styling */
+.btn-load-details {
+  background: #642784;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.btn-load-details:hover {
+  background: #7c3aed;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(100, 39, 132, 0.2);
+}
+
+.btn-load-details:active {
+  transform: translateY(0);
+  background: #581c87;
+}
+
+/* ADD/EDIT EMPLOYEE modal (custom form layout) */
 .add-employee-modal {
   background: #fff;
   border-radius: 16px;
@@ -397,6 +482,7 @@ body {
   align-items: center;
   margin-bottom: 12px;
 }
+
 .add-modal-header h2 {
   color: #642784;
   font-size: 20px;
@@ -409,16 +495,15 @@ body {
   gap: 14px 22px;
 }
 
-/* full width field (use .full across two columns) */
 .add-modal-body .form-field.full {
   grid-column: 1 / -1;
 }
 
-/* form field */
 .form-field {
   display: flex;
   flex-direction: column;
 }
+
 .label-text {
   font-size: 13px;
   color: #6b7280;
@@ -426,7 +511,6 @@ body {
   text-transform: none;
 }
 
-/* inputs styled with purple outline like mock */
 .add-modal-body input[type="text"],
 .add-modal-body input[type="email"],
 .add-modal-body input[type="tel"],
@@ -439,18 +523,17 @@ body {
   background: #fff;
   transition: all 0.2s;
 }
+
 .add-modal-body input:focus {
   border-color: #642784;
   box-shadow: 0 6px 18px rgba(100,39,132,0.06);
 }
 
-/* upload field special */
 .upload-field input[type="file"] {
   padding: 8px;
   border: 1px dashed rgba(100,39,132,0.12);
 }
 
-/* actions row full width */
 .add-modal-actions {
   grid-column: 1 / -1;
   display: flex;
@@ -505,9 +588,9 @@ body {
   color: #555;
 }
 
-/* === UPDATE BUTTON STYLE === */
+/* UPDATE BUTTON STYLE */
 .btn-small {
-  background-color: #6b21a8; /* deep purple */
+  background-color: #6b21a8;
   color: white;
   border: none;
   padding: 6px 14px;
@@ -530,90 +613,7 @@ body {
   background-color: #581c87;
 }
 
-/* === UPDATE MODAL OVERLAY === */
-.update-modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.45);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 2000;
-  backdrop-filter: blur(4px);
-}
-
-/* === UPDATE MODAL === */
-.update-modal {
-  background: white;
-  border-radius: 14px;
-  padding: 25px 28px;
-  width: 380px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-  animation: fadeIn 0.25s ease-out;
-}
-
-.update-modal h3 {
-  margin-bottom: 18px;
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #333;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.update-modal .close-btn {
-  background: none;
-  border: none;
-  font-size: 1.2rem;
-  cursor: pointer;
-  color: #888;
-  transition: color 0.2s;
-}
-
-.update-modal .close-btn:hover {
-  color: #6b21a8;
-}
-
-/* === FORM FIELDS === */
-.update-form label {
-  display: flex;
-  flex-direction: column;
-  font-size: 0.9rem;
-  color: #444;
-  margin-bottom: 12px;
-}
-
-.update-form input,
-.update-form select {
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  padding: 7px 10px;
-  margin-top: 4px;
-  font-size: 0.9rem;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.update-form input:focus,
-.update-form select:focus {
-  border-color: #7e22ce;
-  box-shadow: 0 0 0 2px rgba(126, 34, 206, 0.2);
-  outline: none;
-}
-
-/* === BUTTONS INSIDE MODAL === */
-/* === MODAL OVERLAY (shared) === */
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.45);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 999;
-}
-
-/* === UPDATE MODAL STYLES === */
+/* UPDATE MODAL STYLES */
 .update-modal {
   background: #fff;
   border-radius: 12px;
@@ -624,81 +624,13 @@ body {
   max-width: 90%;
 }
 
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 18px;
-}
-
 .modal-header h3 {
   font-size: 1.3rem;
   font-weight: 600;
   color: #333;
 }
 
-.close-btn {
-  background: none;
-  border: none;
-  font-size: 1.3rem;
-  cursor: pointer;
-  color: #888;
-  transition: color 0.2s;
-}
-
-.close-btn:hover {
-  color: #7e22ce;
-}
-
-/* === MODAL OVERLAY (shared) === */
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.45);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 999;
-}
-
-/* === UPDATE MODAL STYLES === */
-.update-modal {
-  background: #fff;
-  border-radius: 12px;
-  padding: 28px;
-  width: 420px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-  animation: fadeIn 0.25s ease-out;
-  max-width: 90%;
-}
-
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 18px;
-}
-
-.modal-header h3 {
-  font-size: 1.3rem;
-  font-weight: 600;
-  color: #333;
-}
-
-.close-btn {
-  background: none;
-  border: none;
-  font-size: 1.3rem;
-  cursor: pointer;
-  color: #888;
-  transition: color 0.2s;
-}
-
-.close-btn:hover {
-  color: #7e22ce;
-}
-
-/* === UPDATE FORM === */
+/* UPDATE FORM */
 .update-form label {
   display: flex;
   flex-direction: column;
@@ -724,7 +656,7 @@ body {
   outline: none;
 }
 
-/* === ACTION BUTTONS === */
+/* ACTION BUTTONS */
 .update-form-actions {
   display: flex;
   justify-content: flex-end;
@@ -766,18 +698,6 @@ body {
   transform: scale(0.98);
 }
 
-/* === ANIMATION === */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 .employee-info {
   font-size: 0.95rem;
   color: #666;
@@ -809,7 +729,6 @@ body {
   box-shadow: 0 0 0 2px rgba(126, 34, 206, 0.15);
   outline: none;
 }
-
 /* Time input group (12-hour style) */
 .time-input-group {
   display: flex;
@@ -845,6 +764,61 @@ body {
 .time-input-group select:focus {
   border-color: #7e22ce;
   outline: none;
+}
+.employee-management {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 2.5rem;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.employee-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  width: 220px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.employee-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(100, 39, 132, 0.15);
+}
+
+.employee-card h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: #333;
+}
+
+.action-btn {
+  background-color: #642784;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+.action-btn:hover { 
+  background-color: #7c3aed;
+  opacity: 0.95; 
+}
+
+/* Specific card colors */
+.employee-card.edit-employee {
+  border: 2px solid #f3e8ff;
+}
+
+.employee-card.edit-employee:hover {
+  border-color: #9333ea;
 }
 
 
